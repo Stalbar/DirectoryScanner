@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30114.105
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DirectoryScanner.Core", "DirectoryScanner.Core\DirectoryScanner.Core.csproj", "{33E653CC-2182-470C-A964-F4370CAF0608}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DirectoryScanner.Tests", "DirectoryScanner.Tests\DirectoryScanner.Tests.csproj", "{245CAB17-7EFD-4B7B-9A5E-9D4CC2C6E2F3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DirectoryScanner.Exampe", "DirectoryScanner.Example\DirectoryScanner.Exampe.csproj", "{73524C87-95E7-4B16-B5FE-89F6A043825B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{33E653CC-2182-470C-A964-F4370CAF0608}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{33E653CC-2182-470C-A964-F4370CAF0608}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{33E653CC-2182-470C-A964-F4370CAF0608}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{33E653CC-2182-470C-A964-F4370CAF0608}.Release|Any CPU.Build.0 = Release|Any CPU
+		{245CAB17-7EFD-4B7B-9A5E-9D4CC2C6E2F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{245CAB17-7EFD-4B7B-9A5E-9D4CC2C6E2F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{245CAB17-7EFD-4B7B-9A5E-9D4CC2C6E2F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{245CAB17-7EFD-4B7B-9A5E-9D4CC2C6E2F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{73524C87-95E7-4B16-B5FE-89F6A043825B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73524C87-95E7-4B16-B5FE-89F6A043825B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73524C87-95E7-4B16-B5FE-89F6A043825B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73524C87-95E7-4B16-B5FE-89F6A043825B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
