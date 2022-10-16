@@ -5,11 +5,17 @@ namespace DirectoryScanner.Core;
 
 public class Scanner
 {
+    private ConcurrentDictionary<Thread, int> _threads;
+    private int _maxThreadCount;
+    private Semaphore _semaphore;
     private DirectoryEntity _rootDirectory;
     private ConcurrentQueue<DirectoryEntity> _directoriesToScan;
 
-    public Scanner(string fullPath)
+    public Scanner(string fullPath, int maxThreadCount)
     {
+        _threads = new();
+        _maxThreadCount = maxThreadCount;
+        _semaphore = new(_maxThreadCount, _maxThreadCount);
         _directoriesToScan = new();
         _rootDirectory = new DirectoryEntity(fullPath, null);
         _directoriesToScan.Enqueue(_rootDirectory);
@@ -17,25 +23,25 @@ public class Scanner
 
     public void StartScanning()
     {
-        while (!_directoriesToScan.IsEmpty)
+        while (!_directoriesToScan.IsEmpty || !_threads.IsEmpty)
         {
-            if (_directoriesToScan.TryDequeue(out DirectoryEntity? directoryToProcess))
+            _semaphore.WaitOne();
+            if (_directoriesToScan.TryDequeue(out DirectoryEntity directoryToProcess))
             {
-                ProcessFileSystemEntity(directoryToProcess);
+                Thread thread = new(obj => ProcessDirectory((DirectoryEntity)obj));
+                _threads[thread] = thread.ManagedThreadId;
+                thread.Start(directoryToProcess);
             }
+            _semaphore.Release();
         }
     }
 
-    private void ProcessFileSystemEntity(DirectoryEntity directoryToProcess)
+    private void ProcessDirectory(DirectoryEntity directoryToProcess)
     {
-        var subDirectories = Directory.GetDirectories(directoryToProcess.FullPath);
+        _semaphore.WaitOne();
+
         var subEntities = new List<FileSystemEntity>();
-        foreach (var subDirectory in subDirectories)
-        {
-            var directoryEntity = new DirectoryEntity(subDirectory, directoryToProcess);
-            _directoriesToScan.Enqueue(directoryEntity);
-            subEntities.Add(directoryEntity);
-        }
+
         var subFiles = Directory.GetFiles(directoryToProcess.FullPath);
         foreach (var subFile in subFiles)
         {
@@ -44,6 +50,37 @@ public class Scanner
             subEntities.Add(fileEntity);
         }
 
+        var subDirectories = Directory.GetDirectories(directoryToProcess.FullPath);
+        foreach (var subDirectory in subDirectories)
+        {
+            var directoryEntity = new DirectoryEntity(subDirectory, directoryToProcess);
+            _directoriesToScan.Enqueue(directoryEntity);
+            subEntities.Add(directoryEntity);
+        }
+
         directoryToProcess.Childs.AddRange(subEntities);
+        _threads.TryRemove(new (Thread.CurrentThread, Environment.CurrentManagedThreadId));
+        _semaphore.Release();
+    }
+
+    public void Output()
+    {
+        Output("", _rootDirectory);
+    }
+
+    private void Output(string indent, DirectoryEntity root)
+    {
+        Console.WriteLine($"{indent}{root.FullPath} {root.Size}");
+        foreach (var child in root.Childs)
+        {
+            if (child is RegularFileEntity)
+            {
+                Console.WriteLine($"{indent}\t{child.FullPath} {child.Size}");
+            }
+            else if (child is DirectoryEntity)
+            {
+                Output(indent + "\t", (DirectoryEntity)child);
+            }
+        }
     }
 }

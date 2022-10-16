@@ -5,7 +5,8 @@ public class Program
 {
     static void Main(string[] args)
     {
-        Scanner scanner = new Scanner(@"D:\User Files\testFolder");
+        Scanner scanner = new Scanner(@"D:\User Files\testFolder", 5);
         scanner.StartScanning();
+        scanner.Output();
     }
 }
