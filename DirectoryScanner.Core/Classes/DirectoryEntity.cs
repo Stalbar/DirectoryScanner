@@ -3,7 +3,8 @@ namespace DirectoryScanner.Core.Classes;
 public class DirectoryEntity: FileSystemEntity
 {
     private List<FileSystemEntity> _childs;
-    
+    private bool _isFullProcessed = false;
+
     public List<FileSystemEntity> Childs 
     {
         get => _childs;
@@ -11,6 +12,17 @@ public class DirectoryEntity: FileSystemEntity
         {
             _childs = value;
             OnPropertyChanged(nameof(Childs));
+        }
+    }
+    public bool IsFullProcessed
+    {
+        get => _isFullProcessed;
+        set
+        {
+            _isFullProcessed = value;
+            OnPropertyChanged(nameof(Size));
+            OnPropertyChanged(nameof(Childs));
+            OnPropertyChanged(nameof(PercentSize));
         }
     }
 

@@ -24,6 +24,8 @@ public abstract class FileSystemEntity: INotifyPropertyChanged
     {
         FullPath = fullPath;
         _parentDirectory = parentDirectory;
+        if (_parentDirectory != null)
+            PropertyChanged += (x, y) => _parentDirectory.OnPropertyChanged(y.PropertyName);
     }
 
 }

@@ -14,6 +14,8 @@ public class Scanner
     private DirectoryEntity _rootDirectory;
     private ConcurrentQueue<DirectoryEntity> _directoriesToScan;
 
+    public DirectoryEntity Root { get => _rootDirectory; }
+
     public Scanner(string fullPath, int maxThreadCount)
     {
         _threads = new();
@@ -49,7 +51,8 @@ public class Scanner
         var subDirectories = GetDirectorySubDirectories(directoryToProcess);
         ProcessAllSubDirectories(subDirectories, directoryToProcess, subEntities);
 
-        directoryToProcess.Childs.AddRange(subEntities);
+        directoryToProcess.Childs = subEntities;
+        directoryToProcess.IsFullProcessed = true;
         _threads.TryRemove(new(Thread.CurrentThread, Environment.CurrentManagedThreadId));
     }
 
@@ -89,26 +92,5 @@ public class Scanner
         var directoryEntity = new DirectoryEntity(subDirectory, parentDirectory);
         _directoriesToScan.Enqueue(directoryEntity);
         subEntities.Add(directoryEntity);
-    }
-
-    public void Output()
-    {
-        Output("", _rootDirectory);
-    }
-
-    private void Output(string indent, DirectoryEntity root)
-    {
-        Console.WriteLine($"{indent}{root.FullPath} {root.Size} {root.PercentSize}");
-        foreach (var child in root.Childs)
-        {
-            if (child is RegularFileEntity)
-            {
-                Console.WriteLine($"{indent}\t{child.FullPath} {child.Size} {child.PercentSize}");
-            }
-            else if (child is DirectoryEntity)
-            {
-                Output(indent + "\t", (DirectoryEntity)child);
-            }
-        }
     }
 }

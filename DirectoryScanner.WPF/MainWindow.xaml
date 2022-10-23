@@ -1,0 +1,41 @@
+﻿<Window x:Class="DirectoryScanner.WPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DirectoryScanner.WPF"
+        xmlns:model="clr-namespace:DirectoryScanner.Core.Classes;assembly=DirectoryScanner.Core"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <ScrollViewer>
+            <StackPanel>
+                <TreeView x:Name="treeView">
+                    <TreeView.Resources>
+                        <HierarchicalDataTemplate DataType="{x:Type model:DirectoryEntity}" ItemsSource="{Binding Childs}">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding FullPath}"></TextBlock>
+                                <TextBlock Text=" "></TextBlock>
+                                <TextBlock Text="{Binding Size}"></TextBlock>
+                                <TextBlock Text=" "></TextBlock>
+                                <TextBlock Text="{Binding PercentSize}"></TextBlock>
+                            </StackPanel>
+                        </HierarchicalDataTemplate>
+                        <DataTemplate DataType="{x:Type model:RegularFileEntity}">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding FullPath}"></TextBlock>
+                                <TextBlock Text=" "></TextBlock>
+                                <TextBlock Text="{Binding Size}"></TextBlock>
+                                <TextBlock Text=" "></TextBlock>
+                                <TextBlock Text="{Binding PercentSize}"></TextBlock>
+                            </StackPanel>
+                        </DataTemplate>
+                    </TreeView.Resources>
+                </TreeView>
+            </StackPanel>
+        </ScrollViewer>
+        <DockPanel VerticalAlignment="Bottom" LastChildFill="True">
+            <Button x:Name="OpenFileBTN" Padding="3" Margin="4" DockPanel.Dock="Right"  Content="Открыть" Click="InputFile_Click" Tag="выходной файл"/>
+        </DockPanel>
+    </Grid>
+</Window>
