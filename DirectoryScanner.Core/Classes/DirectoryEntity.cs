@@ -2,13 +2,22 @@ namespace DirectoryScanner.Core.Classes;
 
 public class DirectoryEntity: FileSystemEntity
 {
-
-    public List<FileSystemEntity> Childs { get; set; }
+    private List<FileSystemEntity> _childs;
+    
+    public List<FileSystemEntity> Childs 
+    {
+        get => _childs;
+        set
+        {
+            _childs = value;
+            OnPropertyChanged(nameof(Childs));
+        }
+    }
 
     public DirectoryEntity(string fullPath, DirectoryEntity? parentDirectory) 
         : base(fullPath, parentDirectory)
     {
-        Childs = new();
+        _childs = new();
     }
 
     public override long Size => Childs.Sum(x => x.Size);

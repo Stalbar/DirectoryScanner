@@ -98,12 +98,12 @@ public class Scanner
 
     private void Output(string indent, DirectoryEntity root)
     {
-        Console.WriteLine($"{indent}{root.FullPath} {root.Size}");
+        Console.WriteLine($"{indent}{root.FullPath} {root.Size} {root.PercentSize}");
         foreach (var child in root.Childs)
         {
             if (child is RegularFileEntity)
             {
-                Console.WriteLine($"{indent}\t{child.FullPath} {child.Size}");
+                Console.WriteLine($"{indent}\t{child.FullPath} {child.Size} {child.PercentSize}");
             }
             else if (child is DirectoryEntity)
             {
