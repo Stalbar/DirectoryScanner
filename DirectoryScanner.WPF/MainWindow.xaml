@@ -35,7 +35,7 @@
             </StackPanel>
         </ScrollViewer>
         <DockPanel VerticalAlignment="Bottom" LastChildFill="True">
-            <Button x:Name="OpenFileBTN" Padding="3" Margin="4" DockPanel.Dock="Right"  Content="Открыть" Click="InputFile_Click" Tag="выходной файл"/>
+            <Button x:Name="OpenFileBTN" Padding="3" Margin="4" DockPanel.Dock="Right"  Content="Открыть" Click="InputFile_Click"/>
         </DockPanel>
     </Grid>
 </Window>

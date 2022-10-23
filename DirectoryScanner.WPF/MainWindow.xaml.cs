@@ -24,11 +24,7 @@ namespace DirectoryScanner.WPF
 
             if (dlg.ShowDialog() == true)
             {
-                ((Button)sender).Tag = dlg.SelectedPath;
-
                 treeView.ItemsSource = nodes;
-
-
                 nodes.Clear();
                 Scanner scanner = new Scanner(dlg.SelectedPath, 4);
                 nodes.Add(scanner.Root);
