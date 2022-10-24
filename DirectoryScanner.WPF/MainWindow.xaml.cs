@@ -11,9 +11,10 @@ namespace DirectoryScanner.WPF
     public partial class MainWindow : Window
     {
         public ObservableCollection<DirectoryEntity> nodes = new();
-        public CancellationTokenSource tokenSource;
+        public CancellationTokenSource cancellationTokenSource;
         public MainWindow()
         {
+
             InitializeComponent();
         }
 
@@ -24,13 +25,20 @@ namespace DirectoryScanner.WPF
 
             if (dlg.ShowDialog() == true)
             {
+                cancellationTokenSource = new();
+                CancellationToken token = cancellationTokenSource.Token;
                 treeView.ItemsSource = nodes;
                 nodes.Clear();
-                Scanner scanner = new Scanner(dlg.SelectedPath, 4);
+                Scanner scanner = new Scanner(dlg.SelectedPath, 4, token);
                 nodes.Add(scanner.Root);
                 Thread thread = new(scanner.StartScanning);
                 thread.Start();
             }
         }
-    }   
+
+        private void CancelBTN_Click(object sender, RoutedEventArgs e)
+        {
+            cancellationTokenSource.Cancel();
+        }
+    }
 }

@@ -14,10 +14,13 @@ public class Scanner
     private DirectoryEntity _rootDirectory;
     private ConcurrentQueue<DirectoryEntity> _directoriesToScan;
 
+    private CancellationToken _cancellationToken;
+
     public DirectoryEntity Root { get => _rootDirectory; }
 
-    public Scanner(string fullPath, int maxThreadCount)
+    public Scanner(string fullPath, int maxThreadCount, CancellationToken cancellationToken)
     {
+        _cancellationToken = cancellationToken;
         _threads = new();
         _maxThreadCount = maxThreadCount;
         _semaphore = new(_maxThreadCount, _maxThreadCount);
@@ -28,10 +31,10 @@ public class Scanner
 
     public void StartScanning()
     {
-        while (!_directoriesToScan.IsEmpty || !_threads.IsEmpty)
+        while (!_directoriesToScan.IsEmpty || !_threads.IsEmpty && !_cancellationToken.IsCancellationRequested)
         {
             _semaphore.WaitOne();
-            if (_directoriesToScan.TryDequeue(out DirectoryEntity directoryToProcess))
+            if (_directoriesToScan.TryDequeue(out DirectoryEntity directoryToProcess) && !_cancellationToken.IsCancellationRequested)
             {
                 Thread thread = new(obj => ProcessDirectory((DirectoryEntity)obj));
                 _threads[thread] = thread.ManagedThreadId;
@@ -52,7 +55,7 @@ public class Scanner
         ProcessAllSubDirectories(subDirectories, directoryToProcess, subEntities);
 
         directoryToProcess.Childs = subEntities;
-        directoryToProcess.IsFullProcessed = true;
+        directoryToProcess.IsFullProcessed = !_cancellationToken.IsCancellationRequested;
         _threads.TryRemove(new(Thread.CurrentThread, Environment.CurrentManagedThreadId));
     }
 
@@ -65,14 +68,20 @@ public class Scanner
     private void ProcessAllSubFiles(string[] subFiles, DirectoryEntity parentDirectory, List<FileSystemEntity> subEntities)
     {
         foreach (var subFile in subFiles)
-            ProcessSingleSubFile(subFile, parentDirectory, subEntities);
+            if (!_cancellationToken.IsCancellationRequested)
+                ProcessSingleSubFile(subFile, parentDirectory, subEntities);
+            else
+                return;
     }
 
     private void ProcessSingleSubFile(string subFile, DirectoryEntity parentDirectory, List<FileSystemEntity> subEntities)
     {
+        if (_cancellationToken.IsCancellationRequested)
+            return;
         var fileSize = new FileInfo(subFile).Length;
         var fileEntity = new RegularFileEntity(subFile, parentDirectory, fileSize);
         subEntities.Add(fileEntity);
+        Thread.Sleep(500);
     }
 
     private string[] GetDirectorySubDirectories(DirectoryEntity directory)
@@ -84,13 +93,19 @@ public class Scanner
     private void ProcessAllSubDirectories(string[] subDirectories, DirectoryEntity parentDirectory, List<FileSystemEntity> subEntities)
     {
         foreach (var subDirectory in subDirectories)
-            ProcessSingleDirectory(subDirectory, parentDirectory, subEntities);
+            if (!_cancellationToken.IsCancellationRequested)
+                ProcessSingleDirectory(subDirectory, parentDirectory, subEntities);
+            else
+                return;
     }
 
     private void ProcessSingleDirectory(string subDirectory, DirectoryEntity parentDirectory, List<FileSystemEntity> subEntities)
     {
+        if (_cancellationToken.IsCancellationRequested)
+            return;
         var directoryEntity = new DirectoryEntity(subDirectory, parentDirectory);
         _directoriesToScan.Enqueue(directoryEntity);
         subEntities.Add(directoryEntity);
+        Thread.Sleep(500);
     }
 }

@@ -3,9 +3,9 @@ using System.Runtime.CompilerServices;
 
 namespace DirectoryScanner.Core.Classes;
 
-public abstract class FileSystemEntity: INotifyPropertyChanged
+public abstract class FileSystemEntity : INotifyPropertyChanged
 {
-    public abstract long Size { get; }
+    public abstract long? Size { get; }
 
     public string FullPath { get; }
 
@@ -18,8 +18,9 @@ public abstract class FileSystemEntity: INotifyPropertyChanged
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
     }
 
-    public string PercentSize { get => _parentDirectory == null ? "100%" : ((this.Size * 1.0 / _parentDirectory.Size) * 100).ToString("0.0000") + "%"; }
+    private double? PercentValue => _parentDirectory != null && _parentDirectory.Size.HasValue ? this.Size / (_parentDirectory.Size * 1.0) : null;
 
+    public string PercentSize => PercentValue.HasValue ? $"{PercentValue * 100:0.00}%" : "-";
     public FileSystemEntity(string fullPath, DirectoryEntity? parentDirectory)
     {
         FullPath = fullPath;

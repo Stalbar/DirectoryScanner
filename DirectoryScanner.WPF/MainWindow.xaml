@@ -34,8 +34,9 @@
                 </TreeView>
             </StackPanel>
         </ScrollViewer>
-        <DockPanel VerticalAlignment="Bottom" LastChildFill="True">
+        <DockPanel VerticalAlignment="Bottom" LastChildFill="False">
             <Button x:Name="OpenFileBTN" Padding="3" Margin="4" DockPanel.Dock="Right"  Content="Открыть" Click="InputFile_Click"/>
+            <Button x:Name="CancelBTN" Padding="3" Margin="4" DockPanel.Dock="Right"  Content="Отмена" Click="CancelBTN_Click"/>
         </DockPanel>
     </Grid>
 </Window>

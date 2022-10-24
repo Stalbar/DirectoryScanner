@@ -1,3 +1,4 @@
+using System.IO.IsolatedStorage;
 namespace DirectoryScanner.Core.Classes;
 
 public class DirectoryEntity: FileSystemEntity
@@ -32,5 +33,5 @@ public class DirectoryEntity: FileSystemEntity
         _childs = new();
     }
 
-    public override long Size => Childs.Sum(x => x.Size);
+    public override long? Size => IsFullProcessed && Childs.All(x => x.Size.HasValue) ? Childs.Sum(x => x.Size) : null;
 }
